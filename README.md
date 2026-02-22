@@ -1,4 +1,4 @@
-To create a oci where you can run this code, please do the following 
+To run the code in an oci compute instance, please do the following 
 
 ssh into vm instance 
 
