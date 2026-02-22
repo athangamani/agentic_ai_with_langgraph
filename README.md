@@ -44,7 +44,7 @@ git remote add origin https://github.com/athangamani/agentic_ai_with_langgraph.g
 
 git pull origin main
 
-make sure AI_Agent_With_Langgraph_And_Langfuse.py and questions.txt are not present 
+make sure AI_Agent_With_Langgraph_And_Langfuse.py and questions.txt are present in the /home/opc/my_agent 
 
 cd /home/opc/my_agent
 
