@@ -103,3 +103,6 @@ export LANGFUSE_SECRET_KEY="******"
 
 export LANGFUSE_HOST="[https://us.cloud.langfuse.com](https://us.cloud.langfuse.com)"
 
+Finally, execute the agent:
+
+python AI_Agent_With_Langgraph_And_Langfuse.py 
