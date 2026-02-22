@@ -13,10 +13,12 @@ from langgraph.checkpoint.sqlite import SqliteSaver
 # ==========================================
 # 1. SETUP (Standard Config)
 # ==========================================
-os.environ["COHERE_API_KEY"] = "58WRpUQWBF0VSBf86v1JiG8bpniSBy4bJqX9sqDd"
-DB_USER, DB_PASSWORD, DB_DSN = "ADMIN", "MtPilchuk12#", "iawbf4imgo7zddqt_high"
+os.environ["COHERE_API_KEY"] = os.environ["COHERE_API_KEY"]
+DB_USER = "ADMIN" 
+DB_PASSWORD = os.environ["DB_PASSWORD"]
+DB_DSN = "iawbf4imgo7zddqt_high" 
 WALLET_PATH = os.path.join(os.getcwd(), 'wallet')
-WALLET_PASSWORD = "YourWalletPassword123!"
+WALLET_PASSWORD = os.environ["WALLET_PASSWORD"]
 
 db_file = "demo_checkpoints.sqlite"
 if os.path.exists(db_file):
