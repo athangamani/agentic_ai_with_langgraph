@@ -1,0 +1,7 @@
+How many units of the product "Standard Mouse" were sold strictly through the "Internet" channel during the fourth quarter (Q4) of 2001?
+Compare total sales in year 2000 to total sales in year 1999 and display Year-Over-Year Growth as a percentage
+Which sales channels generated the most revenue in 2000
+Show me total sales by Product Category
+How did the sales perform month-over-month in the year 1998?
+Rank the top 5 customers in the US based on their total purchase amount.
+What is the breakdown of sales by customer marital status and gender?
