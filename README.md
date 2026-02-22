@@ -52,3 +52,54 @@ Run this on your local machine:
 (Replace the IP and key name with your actual details)
 
 scp -i ssh-key-2026-02-19.key Wallet_********.zip opc@152.70.125.108:/home/opc/my_agent
+
+Run this on the OCI instance:
+Extract the wallet and configure the directory path.
+
+cd /home/opc/my_agent
+
+mkdir wallet
+
+unzip Wallet_*****.zip -d wallet
+
+vi wallet/sqlnet.ora
+
+Important: Inside sqlnet.ora, update the DIRECTORY parameter to exactly /home/opc/my_agent/wallet
+
+## 6. Clone the Agent Repository
+Pull the source code and required files into your environment.
+
+git init
+
+git remote add origin [https://github.com/athangamani/agentic_ai_with_langgraph.git](https://github.com/athangamani/agentic_ai_with_langgraph.git) 
+
+git pull origin main
+
+Verify that AI_Agent_With_Langgraph_And_Langfuse.py and questions.txt are now located in /home/opc/my_agent. 
+
+## 7. Install Observability Tools
+Install and upgrade Langfuse to trace, monitor, and debug the LangGraph execution.
+
+cd /home/opc/my_agent
+
+source venv/bin/activate
+
+pip install --upgrade langfuse
+
+python -m pip install --upgrade langfuse
+
+## 8. Configure Environment Variables and Run
+Export your secure credentials as environment variables. Do not hardcode these in your scripts.
+
+export COHERE_API_KEY="******" 
+
+export DB_PASSWORD="******" 
+
+export WALLET_PASSWORD="******"
+
+export LANGFUSE_PUBLIC_KEY="******"
+
+export LANGFUSE_SECRET_KEY="******"
+
+export LANGFUSE_HOST="[https://us.cloud.langfuse.com](https://us.cloud.langfuse.com)"
+
