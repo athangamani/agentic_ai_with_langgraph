@@ -38,7 +38,11 @@ Change — Directory to /home/opc/my_agent/wallet
 
 Now to download 2 files from https://github.com/athangamani/agentic_ai_with_langgraph.git
 
+git init
 
+git remote add origin https://github.com/athangamani/agentic_ai_with_langgraph.git 
+
+git pull origin main
 
 
 
