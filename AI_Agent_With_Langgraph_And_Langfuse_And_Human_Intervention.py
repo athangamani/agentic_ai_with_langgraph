@@ -142,13 +142,13 @@ def process_question(q, index):
     
     final_answer_text = "Error: Failed to generate answer."
     
-    # 1. Start the graph initially
+    # Start the graph initially
     for output in app.stream(inputs, config=thread_config):
         for key, value in output.items():
             if key == 'get_schema':
                 print(" Fetching Schema...")
 
-    # 2. Keep checking the state as long as the graph is paused
+    # Keep checking the state as long as the graph is paused
     while True:
         current_state = app.get_state(thread_config)
         
