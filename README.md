@@ -75,7 +75,7 @@ git remote add origin [https://github.com/athangamani/agentic_ai_with_langgraph.
 
 git pull origin main
 
-Verify that AI_Agent_With_Langgraph_And_Langfuse.py and questions.txt are now located in /home/opc/my_agent. 
+Verify that AI_Agent_With_Langgraph_And_Langfuse_And_Human_Intervention.py and questions.txt are now located in /home/opc/my_agent. 
 
 ## 7. Install Observability Tools
 Install and upgrade Langfuse to trace, monitor, and debug the LangGraph execution.
@@ -105,4 +105,4 @@ export LANGFUSE_HOST="[https://us.cloud.langfuse.com](https://us.cloud.langfuse.
 
 Finally, execute the agent:
 
-python AI_Agent_With_Langgraph_And_Langfuse.py 
+python AI_Agent_With_Langgraph_And_Langfuse_And_Human_Intervention.py 
