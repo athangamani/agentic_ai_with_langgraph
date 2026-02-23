@@ -199,7 +199,7 @@ def process_question(q, index):
     return final_answer_text
     
 # ==========================================
-# 7. BATCH PROCESSING METHOD
+# 6. BATCH PROCESSING METHOD
 # ==========================================
 def run_batch_processing(input_file: str, output_file: str):
     try:
@@ -234,7 +234,7 @@ def run_batch_processing(input_file: str, output_file: str):
     print(f"\n Batch processing complete. Results saved to {output_file}")
 
 # ==========================================
-# 8. EXECUTE SCRIPT
+# 7. EXECUTE SCRIPT
 # ==========================================
 if __name__ == "__main__":
     run_batch_processing("questions.txt", "answers.txt")
