@@ -55,6 +55,7 @@ SYSTEM_PREAMBLE = "You are an Oracle SQL Expert for the SH schema. You have perm
 # 3. NODES
 # ==========================================
 def get_schema(state: AgentState):
+    db.run("ALTER SESSION SET CURRENT_SCHEMA = SH")
     return {"schema_info": db.get_table_info(), "retry_count": 0, "error": None}
 
 def generate_sql(state: AgentState):

@@ -130,22 +130,8 @@ app = workflow.compile(
     interrupt_before=["execute_sql"]
 )
 
-# ==========================================
-# 6. RUN BATCH (File I/O)
-# ==========================================
-input_file = "questions.txt"
-output_file = "answers.txt"
-
-try:
-    with open(input_file, "r") as f:
-        questions = [line.strip() for line in f.readlines() if line.strip()]
-except FileNotFoundError:
-    print(f" Error: '{input_file}' not found. Please create it first.")
-    exit()
-
 @observe(name="AI_Agent_Answer_Question_using_SQL")
 def process_question(q, index):
-
     langfuse_handler = CallbackHandler()
     
     inputs = {"question": q}
@@ -156,64 +142,99 @@ def process_question(q, index):
     
     final_answer_text = "Error: Failed to generate answer."
     
+    # 1. Start the graph initially
     for output in app.stream(inputs, config=thread_config):
         for key, value in output.items():
             if key == 'get_schema':
                 print(" Fetching Schema...")
 
-    current_state = app.get_state(thread_config)
-    
-    if "execute_sql" in current_state.next:
-        # Pull the generated SQL from the current memory state
-        pending_sql = current_state.values.get("sql_query")
+    # 2. Keep checking the state as long as the graph is paused
+    while True:
+        current_state = app.get_state(thread_config)
         
-        print("\n" + "="*50)
-        print("Human Approval Required : ")
-        print(f"The agent wants to execute the following SQL on your SH schema:\n{pending_sql}")
-        print("="*50)
-        
-        # 3. Prompt you in the terminal for approval
-        user_approval = input("Do you approve this query? (y/n): ")
-        
-        if user_approval.lower() == 'y':
-            print("SQL Approved. Resuming execution...")
+        # If there is no "next" node, the graph is totally finished. Break the loop.
+        if not current_state.next:
+            if current_state.values.get('answer'):
+                final_answer_text = current_state.values['answer']
+            break
             
-            # 4. Resume the graph by passing 'None' as the input
+        # If the graph is paused at execute_sql, prompt the user
+        if "execute_sql" in current_state.next:
+            pending_sql = current_state.values.get("sql_query")
+            current_retry = current_state.values.get("retry_count", 0)
+            
+            print("\n" + "="*50)
+            print("Human Approval Required : ")
+            print(f"The agent wants to execute the following SQL:\n{pending_sql}")
+            print("="*50)
+            
+            user_approval = input("Do you approve this query? (y/n): ")
+            
+            if user_approval.lower() == 'y':
+                print("SQL Approved. Executing...")
+                
+            else:
+                print("SQL Rejected.")
+                feedback = input("Tell the AI what needs to be fixed:\n> ")
+                
+                app.update_state(
+                    thread_config, 
+                    {
+                        "error": f"Human Rejected SQL. Feedback: {feedback}", 
+                        "retry_count": current_retry + 1
+                    },
+                    as_node="execute_sql"
+                )
+                print("Feedback sent. AI is rewriting the query...")
+                
             for output in app.stream(None, config=thread_config):
                 for key, value in output.items():
-                    if key == 'execute_sql' and value.get("error"):
+                    if key == 'generate_sql':
+                        print(" Rewriting SQL...")
+                    elif key == 'execute_sql' and value.get("error"):
                         print(f" Execution Failed: {value['error']}")
                     elif key == 'finalize_answer':
-                        final_answer_text = value['answer']
-                        print(f"\n FINAL ANSWER:\n{final_answer_text}")
-        else:
-            print("SQL Rejected. Moving to the next question.")
-            return "Error: Human rejected the SQL query."
-            
+                        print(f"\n FINAL ANSWER:\n{value['answer']}")
+                        
     return final_answer_text
-
-
-print(" Self-Correcting Agent Starting...")
-print("-" * 70)
-
-with open(output_file, "w") as out_f:
     
-    for index, q in enumerate(questions, 1):
-        print(f"\n Processing [{index}/{len(questions)}]: {q}")
-        print("-" * 50)
-        
-        try:
-            final_answer = process_question(q, index)
-            get_client().flush()
+# ==========================================
+# 7. BATCH PROCESSING METHOD
+# ==========================================
+def run_batch_processing(input_file: str, output_file: str):
+    try:
+        with open(input_file, "r") as f:
+            questions = [line.strip() for line in f.readlines() if line.strip()]
+    except FileNotFoundError:
+        print(f" Error: '{input_file}' not found. Please create it first.")
+        return
 
-        except Exception as e:
-            print(f" Graph Error: {e}")
-            final_answer_text = f"Graph Error: {e}"
-            
-        out_f.write(f"Question {index}: {q}\n")
-        out_f.write(f"Answer:\n{final_answer}\n")
-        out_f.write("-" * 50 + "\n\n")
-            
-        time.sleep(1)
+    print(" Self-Correcting Agent Starting...")
+    print("-" * 70)
 
-print(f"\n Batch processing complete. Results saved to {output_file}")
+    with open(output_file, "w") as out_f:
+        for index, q in enumerate(questions, 1):
+            print(f"\n Processing [{index}/{len(questions)}]: {q}")
+            print("-" * 50)
+            
+            try:
+                final_answer = process_question(q, index)
+                get_client().flush()
+
+            except Exception as e:
+                print(f" Graph Error: {e}")
+                final_answer = f"Graph Error: {e}"
+                
+            out_f.write(f"Question {index}: {q}\n")
+            out_f.write(f"Answer:\n{final_answer}\n")
+            out_f.write("-" * 50 + "\n\n")
+                
+            time.sleep(1)
+
+    print(f"\n Batch processing complete. Results saved to {output_file}")
+
+# ==========================================
+# 8. EXECUTE SCRIPT
+# ==========================================
+if __name__ == "__main__":
+    run_batch_processing("questions.txt", "answers.txt")
