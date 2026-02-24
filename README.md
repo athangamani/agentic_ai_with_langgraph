@@ -4,6 +4,7 @@ This repository contains the setup and deployment instructions for running a Lan
 
 ## Prerequisites
 * Access to an OCI Compute Instance via SSH.
+* Setup a Oracle AI Datalakehouse to use the SH schema 
 * Oracle Database Wallet ZIP file (e.g., `Wallet_********.zip`).
 * SSH key pair for instance access.
 * Required API keys and credentials (Cohere, Database, Langfuse).
